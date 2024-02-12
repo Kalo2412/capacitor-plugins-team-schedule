@@ -43,30 +43,6 @@
     }
   },
   "workspaces": [
-    "action-sheet",
-    "app",
-    "app-launcher",
-    "browser",
-    "camera",
-    "clipboard",
-    "device",
-    "dialog",
-    "filesystem",
-    "geolocation",
-    "google-maps",
-    "haptics",
-    "keyboard",
-    "local-notifications",
-    "motion",
-    "network",
-    "preferences",
-    "push-notifications",
-    "screen-orientation",
-    "screen-reader",
-    "share",
-    "splash-screen",
-    "status-bar",
-    "text-zoom",
-    "toast"
+    "browser"
   ]
 }

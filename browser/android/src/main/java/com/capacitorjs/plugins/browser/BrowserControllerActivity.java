@@ -1,22 +1,39 @@
 package com.capacitorjs.plugins.browser;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
-import androidx.annotation.Nullable;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 
 public class BrowserControllerActivity extends Activity {
 
-    private boolean isCustomTabsOpen = false;
-
+    @SuppressLint("SetJavaScriptEnabled")
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        isCustomTabsOpen = false;
+        setContentView(R.layout.activity_browser);
 
-        if (BrowserPlugin.browserControllerListener != null) {
-            BrowserPlugin.browserControllerListener.onControllerReady(this);
+        WebView webView = findViewById(R.id.webview);
+        webView.setWebViewClient(new WebViewClient() {
+            @Override
+            public void onPageFinished(WebView view, String url) {
+                super.onPageFinished(view, url);
+            }
+
+            @Override
+            public void onReceivedError(WebView view, android.webkit.WebResourceRequest request, android.webkit.WebResourceError error) {
+                super.onReceivedError(view, request, error);
+            }
+        });
+
+        webView.getSettings().setJavaScriptEnabled(true);
+
+        Intent intent = getIntent();
+        String url = intent.getStringExtra("url");
+        if (url != null && !url.isEmpty()) {
+            webView.loadUrl(url);
         }
     }
 
@@ -26,27 +43,5 @@ public class BrowserControllerActivity extends Activity {
         if (intent.hasExtra("close")) {
             finish();
         }
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        if (isCustomTabsOpen) {
-            isCustomTabsOpen = false;
-            finish();
-        } else {
-            isCustomTabsOpen = true;
-        }
-    }
-
-    public void open(Browser implementation, Uri url, Integer toolbarColor) {
-        implementation.open(url, toolbarColor);
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        isCustomTabsOpen = false;
-        BrowserPlugin.setBrowserControllerListener(null);
     }
 }

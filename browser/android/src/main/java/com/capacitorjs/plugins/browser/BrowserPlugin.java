@@ -32,53 +32,17 @@ public class BrowserPlugin extends Plugin {
 
     @PluginMethod
     public void open(PluginCall call) {
-        // get the URL
         String urlString = call.getString("url");
-        if (urlString == null) {
-            call.reject("Must provide a URL to open");
-            return;
-        }
-        if (urlString.isEmpty()) {
-            call.reject("URL must not be empty");
-            return;
-        }
-        Uri url;
-        try {
-            url = Uri.parse(urlString);
-        } catch (Exception ex) {
-            call.reject(ex.getLocalizedMessage());
+        if (urlString == null || urlString.isEmpty()) {
+            call.reject("Must provide a valid URL to open");
             return;
         }
 
-        // get the toolbar color, if provided
-        String colorString = call.getString("toolbarColor");
-        Integer toolbarColor = null;
-        if (colorString != null) try {
-            toolbarColor = WebColor.parseColor(colorString);
-        } catch (IllegalArgumentException ex) {
-            Logger.error(getLogTag(), "Invalid color provided for toolbarColor. Using default", null);
-        }
+        Intent intent = new Intent(getContext(), BrowserControllerActivity.class);
+        intent.putExtra("url", urlString);
+        getContext().startActivity(intent);
 
-        // open the browser and finish
-        try {
-            Intent intent = new Intent(getContext(), BrowserControllerActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            getContext().startActivity(intent);
-
-            Integer finalToolbarColor = toolbarColor;
-            setBrowserControllerListener(
-                activity -> {
-                    activity.open(implementation, url, finalToolbarColor);
-                    browserControllerActivityInstance = activity;
-                    call.resolve();
-                }
-            );
-        } catch (ActivityNotFoundException ex) {
-            Logger.error(getLogTag(), ex.getLocalizedMessage(), null);
-            call.reject("Unable to display URL");
-            return;
-        }
+        call.resolve();
     }
 
     @PluginMethod

@@ -2,7 +2,7 @@
 import PackageDescription
 
 let package = Package(
-    name: "CapacitorBrowser",
+    name: "TeamscheduleCapacitorBrowser",
     platforms: [.iOS(.v13)],
     products: [
         .library(
